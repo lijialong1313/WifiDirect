@@ -39,7 +39,7 @@ class IWlanHostedNetworkListener
 public:
     virtual ~IWlanHostedNetworkListener() {}
 
-    virtual void OnDeviceConnected(std::wstring remoteHostName) = 0;
+    virtual void OnDeviceConnected(std::wstring deviceId, std::wstring remoteHostAddress) = 0;
     virtual void OnDeviceDisconnected(std::wstring deviceId) = 0;
 
     virtual void OnAdvertisementStarted() = 0;
@@ -67,6 +67,11 @@ class WlanHostedNetworkHelper
 public:
     WlanHostedNetworkHelper();
     ~WlanHostedNetworkHelper();
+
+    bool HasListener()
+    {
+        return _listener != nullptr;
+    }
 
     /// Set SSID (optional, falls back to a Wi-FI Direct default SSID which begins with "DIRECT-")
     void SetSSID(const std::wstring& ssid)

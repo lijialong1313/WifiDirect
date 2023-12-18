@@ -4,6 +4,5 @@
 class Device {
 public:
 	std::wstring deviceId;
-	std::wstring remoteHostName;
-
+	std::wstring remoteHostAddress;
 };

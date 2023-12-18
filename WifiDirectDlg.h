@@ -4,6 +4,11 @@
 
 #pragma once
 #include "WlanHostedNetworkWinRT.h"
+#include "DeviceItem.h"
+#include <vector>
+using namespace std;
+#define WM_USER_NOTIFYICON WM_USER+1
+
 // CWifiDirectDlg 对话框
 class CWifiDirectDlg : public CDialogEx , public IWlanHostedNetworkListener, public IWlanHostedNetworkPrompt
 {
@@ -39,13 +44,15 @@ public:
 	afx_msg void OnShowPasswordClick();
 	bool isShowPassword = false;
 	bool isRunning = false;
-	afx_msg void OnClose();
 	WlanHostedNetworkHelper _hostedNetwork;
 	Microsoft::WRL::Wrappers::Event _apEvent;
 	afx_msg void OnWifiClick();
 	CButton WifiButton;
+	bool m_bAddShellIcon;
+	NOTIFYICONDATA m_notify;
+	vector<Device> connectList;
 public:
-	virtual void OnDeviceConnected(std::wstring remoteHostName) override;
+	virtual void OnDeviceConnected(std::wstring deviceId, std::wstring remoteHostAddress) override;
 	virtual void OnDeviceDisconnected(std::wstring deviceId) override;
 
 	virtual void OnAdvertisementStarted() override;
@@ -59,4 +66,12 @@ public:
 	// IWlanHostedNetworkPrompt Implementation
 
 	virtual bool AcceptIncommingConnection() override;
+	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+	void AddShellIcon();
+
+	afx_msg LRESULT OnNotifyMsg(WPARAM wparam, LPARAM lparam);
+	afx_msg void OnClose();
+	void ShowMessage(LPCTSTR message);
+	// 连接显示列表
+	CListCtrl listCtrl;
 };

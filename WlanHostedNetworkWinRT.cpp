@@ -459,7 +459,7 @@ void WlanHostedNetworkHelper::StartListener()
                                         // Notify Listener
                                         if (_listener != nullptr)
                                         {
-                                            _listener->OnDeviceConnected(remoteHostNameDisplay.GetRawBuffer(nullptr));
+                                            _listener->OnDeviceConnected(deviceId.GetRawBuffer(nullptr),remoteHostNameDisplay.GetRawBuffer(nullptr));
                                         }
                                     }
                                     else
