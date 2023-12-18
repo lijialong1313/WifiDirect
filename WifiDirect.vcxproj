@@ -212,6 +212,7 @@
     <None Include="res\WifiDirect.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="D:\0用户文件夹\Desktop\favicon.ico" />
     <Image Include="res\WifiDirect.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

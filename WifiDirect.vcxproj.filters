@@ -68,5 +68,8 @@
     <Image Include="res\WifiDirect.ico">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="D:\0用户文件夹\Desktop\favicon.ico">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

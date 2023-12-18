@@ -19,7 +19,7 @@
 CWifiDirectDlg::CWifiDirectDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_WIFIDIRECT_DIALOG, pParent) , _apEvent(CreateEventEx(nullptr, nullptr, 0, WRITE_OWNER | EVENT_ALL_ACCESS))
 {
-	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	m_hIcon = AfxGetApp()->LoadIcon(IDI_ICON1);
 	
 	//初始化数据
 	HRESULT hr = _apEvent.IsValid() ? S_OK : HRESULT_FROM_WIN32(GetLastError());
