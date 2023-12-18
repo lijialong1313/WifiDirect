@@ -74,8 +74,8 @@ BOOL CWifiDirectDlg::OnInitDialog()
 	listCtrl.GetWindowRect(&rect);
 	int width = ((int)rect.right - (int)rect.left) / 2;
 	listCtrl.SetExtendedStyle(LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT | LVS_EX_HEADERDRAGDROP);
-	listCtrl.InsertColumn(0, _T("设备id"), LVCFMT_CENTER,width);
-	listCtrl.InsertColumn(1, _T("地址"), LVCFMT_CENTER, width);
+	listCtrl.InsertColumn(0, _T("设备id"), LVCFMT_CENTER,width,0);
+	listCtrl.InsertColumn(1, _T("地址"), LVCFMT_CENTER, width,1);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -146,6 +146,7 @@ void CWifiDirectDlg::OnWifiClick()
 		WifiButton.SetWindowTextW(TEXT("开启热点"));
 		SSID.SetReadOnly(false);
 		PASS.SetReadOnly(false);
+		listCtrl.DeleteAllItems();
 		_hostedNetwork.Stop();
 		//不知道为什么加了个弹框就可以了
 		MessageBox(LPCTSTR(_T("热点已关闭")));
@@ -187,12 +188,35 @@ void CWifiDirectDlg::OnWifiClick()
 
 void CWifiDirectDlg::OnDeviceConnected(std::wstring deviceId,std::wstring remoteHostAddress)
 {
-	//std::wcout << std::endl << "Peer connected: " << remoteHostAddress << std::endl;
+	//插入一条连接数据
+	int append = listCtrl.GetItemCount();
+	listCtrl.InsertItem(0, LPCTSTR(deviceId.c_str()));
+	listCtrl.SetItemText(0, 1, LPCTSTR(remoteHostAddress.c_str()));
+	//提示
+	CString c;
+	c.Append(deviceId.c_str());
+	c.Append(_T("已连接"));
+	ShowMessage(LPCTSTR(c.GetString()));
 }
 
 void CWifiDirectDlg::OnDeviceDisconnected(std::wstring deviceId)
 {
-	//std::wcout << std::endl << "Peer disconnected: " << deviceId << std::endl;
+	LVFINDINFO info;
+	int nIndex;
+
+	info.flags = LVFI_PARTIAL | LVFI_STRING;
+	info.psz = deviceId.c_str();
+
+	// Delete all of the items that begin with the string.
+	while ((nIndex = listCtrl.FindItem(&info)) != -1)
+	{
+		listCtrl.DeleteItem(nIndex);
+	}
+	//提示
+	CString c;
+	c.Append(deviceId.c_str());
+	c.Append(_T("已断开连接"));
+	ShowMessage(LPCTSTR(c.GetString()));
 }
 
 void CWifiDirectDlg::OnAdvertisementStarted()
