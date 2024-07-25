@@ -13,13 +13,13 @@
 #endif
 
 // CWifiDirectDlg 对话框
-
+#define CONFIG_NAME "config.ini"
 
 
 CWifiDirectDlg::CWifiDirectDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_WIFIDIRECT_DIALOG, pParent) , _apEvent(CreateEventEx(nullptr, nullptr, 0, WRITE_OWNER | EVENT_ALL_ACCESS))
 {
-	m_hIcon = AfxGetApp()->LoadIcon(IDI_ICON1);
+	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	
 	//初始化数据
 	HRESULT hr = _apEvent.IsValid() ? S_OK : HRESULT_FROM_WIN32(GetLastError());
@@ -51,7 +51,10 @@ BEGIN_MESSAGE_MAP(CWifiDirectDlg, CDialogEx)
 	ON_COMMAND(IDCLOSE, &CWifiDirectDlg::OnClose)
 	ON_BN_CLICKED(IDC_BUTTON1, &CWifiDirectDlg::OnWifiClick)
 	ON_MESSAGE(WM_USER_NOTIFYICON, &CWifiDirectDlg::OnNotifyMsg)
+	//ON_MESSAGE(WIFI_NOTIFY, &CWifiDirectDlg::OnWifiEventMessage)
+	ON_MESSAGE(WM_COMMAND, &CWifiDirectDlg::OnWifiEventMessage)
 	ON_WM_CLOSE()
+	ON_BN_CLICKED(IDC_BUTTON3, &CWifiDirectDlg::OnBnClickedButton3)
 END_MESSAGE_MAP()
 
 
@@ -71,12 +74,44 @@ BOOL CWifiDirectDlg::OnInitDialog()
 
 	//设置列表
 	CRect rect;
+	CRect* rect2 = &rect;
 	listCtrl.GetWindowRect(&rect);
 	int width = ((int)rect.right - (int)rect.left) / 2;
 	listCtrl.SetExtendedStyle(LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT | LVS_EX_HEADERDRAGDROP);
 	listCtrl.InsertColumn(0, _T("设备id"), LVCFMT_CENTER,width,0);
 	listCtrl.InsertColumn(1, _T("地址"), LVCFMT_CENTER, width,1);
 
+	// 读取配置文件
+	ini.Load(CONFIG_NAME);
+	//是否开启软件后自动打开wifi
+	bool isAutoOpenAfterStart = false;
+	ini.GetBoolValueOrDefault("golbal", "isAutoOpenAfterStart",&isAutoOpenAfterStart, false);
+	((CButton*)GetDlgItem(IDC_CHECK1))->SetCheck(isAutoOpenAfterStart?1:0);
+	//是否开启软件后自动打开wifi
+	bool isAutoSaveConfigBeforeExit = false;
+	ini.GetBoolValueOrDefault("golbal", "isAutoSaveConfigBeforeExit", &isAutoSaveConfigBeforeExit, true);
+	((CButton*)GetDlgItem(IDC_CHECK2))->SetCheck(isAutoSaveConfigBeforeExit ? 1 : 0);
+	//wifi的ssid
+	std::string ssid_s;
+	ini.GetStringValue("global", "ssid",&ssid_s);
+	//wifi的密码
+	std::string pass_s;
+	ini.GetStringValue("global", "pass", &pass_s);
+	CString ssid(ssid_s.c_str());
+	CString pass(pass_s.c_str());
+	SSID.SetWindowTextW(ssid);
+	PASS.SetWindowTextW(pass);
+
+	
+	//自动开启热点
+	if (((CButton*)GetDlgItem(IDC_CHECK1))->GetCheck())
+	{
+		PostMessage(WM_COMMAND, MENU_1, 0);
+		/*if (!isRunning)
+		{
+			this->OnWifiClick();
+		}*/
+	}
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -306,12 +341,36 @@ LRESULT CWifiDirectDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 			//鼠标双击时主窗口出现 
 			if (AfxGetApp()->m_pMainWnd->IsWindowVisible()) //判断窗口当前状态
 			{
-				AfxGetApp()->m_pMainWnd->ShowWindow(SW_HIDE); //隐藏窗口
+				//AfxGetApp()->m_pMainWnd->ShowWindow(SW_HIDE); //隐藏窗口
 			}
 			else
 			{
 				AfxGetApp()->m_pMainWnd->ShowWindow(SW_SHOW); //显示窗口
 			}
+		}
+		break;
+	case WM_COMMAND:
+		if (wParam == MENU_1)
+		{
+			//MessageBox(LPCTSTR(_T("触发事件1")));
+			if (!isRunning)
+			{
+				this->OnWifiClick();
+			}
+		}
+		else if (wParam == MENU_2)
+		{
+			if (isRunning)
+			{
+				this->OnWifiClick();
+			}
+			//MessageBox(LPCTSTR(_T("触发事件2")));
+		}
+		else if (wParam == MENU_3)
+		{
+			//MessageBox(LPCTSTR(_T("触发事件3")));
+			::PostMessage(AfxGetMainWnd()->m_hWnd, WM_CLOSE, 0, 0);
+			//this->CloseWindow();
 		}
 		break;
 	default:
@@ -342,36 +401,83 @@ void CWifiDirectDlg::AddShellIcon()
 	m_bAddShellIcon = TRUE;
 }
 
+LRESULT CWifiDirectDlg::OnWifiEventMessage(WPARAM wparam, LPARAM lparam)
+{
+	/*switch (wparam) {
+	case MENU_1:
+	{
+		if (!isRunning)
+		{
+			this->OnWifiClick();
+		}
+
+		break;
+	}
+	case MENU_2:
+	{
+		if (isRunning)
+		{
+			this->OnWifiClick();
+		}
+		break;
+	}
+	case MENU_3:
+	{
+		//this->CloseWindow();
+	}
+	}*/
+	/*CString c;
+	c.Append(_T("收到Wifi消息"));
+	ShowMessage(LPCTSTR(c.GetString()));*/
+	return 0;
+}
 LRESULT CWifiDirectDlg::OnNotifyMsg(WPARAM wparam, LPARAM lparam)
 {
 	//wParam接收的是图标的ID，而lParam接收的是鼠标的行为   
 	if (wparam != IDR_MAINFRAME)
 		return    1;
+	
 	switch (lparam)
 	{
-	case  WM_RBUTTONUP://右键起来时弹出快捷菜单，这里只有一个“关闭”   
+	case  WM_RBUTTONDOWN://右键起来时弹出快捷菜单，这里只有一个“关闭”   
 	{
 		LPPOINT    lpoint = new    tagPOINT;
 		::GetCursorPos(lpoint);//得到鼠标位置   
 		CMenu menu;
-		menu.CreatePopupMenu();//声明一个弹出式菜单   
+		menu.CreatePopupMenu();//声明一个弹出式菜单
 		//增加菜单项“关闭”，点击则发送消息WM_DESTROY给主窗口（已   
 		//隐藏），将程序结束
 		//menu.AppendMenuW(MF_STRING, WM_USER_NOTIFYICON, LPCTSTR(_T("还原")));
-		menu.AppendMenuW(MF_STRING, WM_DESTROY, LPCTSTR(_T("关闭")));
+		if (isRunning)
+		{
+			menu.AppendMenuW(MF_STRING, MENU_2, LPCTSTR(_T("关闭热点")));
+		}
+		else {
+			menu.AppendMenuW(MF_STRING, MENU_1, LPCTSTR(_T("开启热点")));
+		}
+		
+		menu.AppendMenuW(MF_STRING, MENU_3, LPCTSTR(_T("退出软件")));
+		menu.AppendMenuW(MF_STRING, MENU_4, LPCTSTR(_T("关闭菜单")));
 		//确定弹出式菜单的位置   
 		menu.TrackPopupMenu(TPM_LEFTALIGN, lpoint->x, lpoint->y, this);
 		//资源回收   
 		HMENU    hmenu = menu.Detach();
 		menu.DestroyMenu();
 		delete lpoint;
+		break;
 	}
-	break;
+	case WM_LBUTTONUP: {
+		break;
+	}
 	case WM_LBUTTONDBLCLK://双击左键的处理   
 	{
-		this->ShowWindow(SW_SHOW);//简单的显示主窗口完事儿   
+		/*if (!AfxGetApp()->m_pMainWnd->IsWindowVisible())
+		{
+			//简单的显示主窗口完事
+			this->ShowWindow(SW_SHOW);
+		}*/
+		break;
 	}
-	break;
 	}
 	return 0;
 }
@@ -400,7 +506,11 @@ void CWifiDirectDlg::OnClose()
 		MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, name, -1, wname, nLen);
 		MessageBox(wname);
 	}
-	
+	// 判断是否要保存配置
+	if (((CButton*)GetDlgItem(IDC_CHECK2))->GetCheck()) {
+		
+		this->OnBnClickedButton3();
+	}
 	//_hostedNetwork.~WlanHostedNetworkHelper();
 	Shell_NotifyIcon(NIM_DELETE, &m_notify); //关闭时删除系统托盘图标
 	//清理vector的内存
@@ -421,4 +531,24 @@ void CWifiDirectDlg::ShowMessage(LPCTSTR message)
 	UpdateData(FALSE);
 	GetDlgItem(IDC_STATIC4)->Invalidate();
 
+}
+
+
+void CWifiDirectDlg::OnBnClickedButton3()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	CString ssid;
+	CString pass;
+	SSID.GetWindowTextW(ssid);
+	PASS.GetWindowTextW(pass); 
+	std::string ssid_s = CStringA(ssid);
+	std::string pass_s = CStringA(pass);
+	ini.SetStringValue("global", "ssid", ssid_s);
+	ini.SetStringValue("global", "pass", pass_s);
+	ini.SetBoolValue("golbal", "isAutoOpenAfterStart", ((CButton*)GetDlgItem(IDC_CHECK1))->GetCheck());
+	ini.SetBoolValue("golbal", "isAutoSaveConfigBeforeExit", ((CButton*)GetDlgItem(IDC_CHECK2))->GetCheck());
+	ini.Save();
+	CString c;
+	c.Append(_T("配置已保存"));
+	ShowMessage(LPCTSTR(c.GetString()));
 }

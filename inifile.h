@@ -38,21 +38,21 @@ using std::string;
 using std::vector;
 
 #define RET_OK 0
-// æ²¡æœ‰æ‰¾åˆ°åŒ¹é…çš„]
+// Ã»ÓĞÕÒµ½Æ¥ÅäµÄ]
 #define ERR_UNMATCHED_BRACKETS 2
-// æ®µä¸ºç©º
+// ¶ÎÎª¿Õ
 #define ERR_SECTION_EMPTY 3
-// æ®µåå·²ç»å­˜åœ¨
+// ¶ÎÃûÒÑ¾­´æÔÚ
 #define ERR_SECTION_ALREADY_EXISTS 4
-// è§£ækey valueå¤±è´¥
+// ½âÎökey valueÊ§°Ü
 #define ERR_PARSE_KEY_VALUE_FAILED 5
-// æ‰“å¼€æ–‡ä»¶å¤±è´¥
+// ´ò¿ªÎÄ¼şÊ§°Ü
 #define ERR_OPEN_FILE_FAILED 6
-// å†…å­˜ä¸è¶³
+// ÄÚ´æ²»×ã
 #define ERR_NO_ENOUGH_MEMORY 7
-// æ²¡æœ‰æ‰¾åˆ°å¯¹åº”çš„key
+// Ã»ÓĞÕÒµ½¶ÔÓ¦µÄkey
 #define ERR_NOT_FOUND_KEY 8
-// æ²¡æœ‰æ‰¾åˆ°å¯¹åº”çš„section
+// Ã»ÓĞÕÒµ½¶ÔÓ¦µÄsection
 #define ERR_NOT_FOUND_SECTION 9
 
 namespace inifile
@@ -61,24 +61,24 @@ const char delim[] = "\n";
 struct IniItem {
     string key;
     string value;
-    string comment;  // æ¯ä¸ªé”®çš„æ³¨é‡Šï¼Œéƒ½æ˜¯æŒ‡è¯¥è¡Œä¸Šæ–¹çš„å†…å®¹
+    string comment;  // Ã¿¸ö¼üµÄ×¢ÊÍ£¬¶¼ÊÇÖ¸¸ÃĞĞÉÏ·½µÄÄÚÈİ
     string rightComment;
 };
 
 struct IniSection {
-    typedef vector<IniItem>::iterator IniItem_it;  // å®šä¹‰ä¸€ä¸ªè¿­ä»£å™¨ï¼Œå³æŒ‡å‘é”®å…ƒç´ çš„æŒ‡é’ˆ
+    typedef vector<IniItem>::iterator IniItem_it;  // ¶¨ÒåÒ»¸öµü´úÆ÷£¬¼´Ö¸Ïò¼üÔªËØµÄÖ¸Õë
     IniItem_it begin() {
-        return items.begin();  // æ®µç»“æ„ä½“çš„beginå…ƒç´ æŒ‡å‘itemsçš„å¤´æŒ‡é’ˆ
+        return items.begin();  // ¶Î½á¹¹ÌåµÄbeginÔªËØÖ¸ÏòitemsµÄÍ·Ö¸Õë
     }
 
     IniItem_it end() {
-        return items.end();  // æ®µç»“æ„ä½“çš„beginå…ƒç´ æŒ‡å‘itemsçš„å°¾æŒ‡é’ˆ
+        return items.end();  // ¶Î½á¹¹ÌåµÄbeginÔªËØÖ¸ÏòitemsµÄÎ²Ö¸Õë
     }
 
     string name;
-    string comment;  // æ¯ä¸ªæ®µçš„æ³¨é‡Šï¼Œéƒ½æ˜¯æŒ‡è¯¥è¡Œä¸Šæ–¹çš„å†…å®¹
+    string comment;  // Ã¿¸ö¶ÎµÄ×¢ÊÍ£¬¶¼ÊÇÖ¸¸ÃĞĞÉÏ·½µÄÄÚÈİ
     string rightComment;
-    vector<IniItem> items;  // é”®å€¼é¡¹æ•°ç»„ï¼Œä¸€ä¸ªæ®µå¯ä»¥æœ‰å¤šä¸ªé”®å€¼ï¼Œæ‰€æœ‰ç”¨vectoræ¥å‚¨å­˜
+    vector<IniItem> items;  // ¼üÖµÏîÊı×é£¬Ò»¸ö¶Î¿ÉÒÔÓĞ¶à¸ö¼üÖµ£¬ËùÓĞÓÃvectorÀ´´¢´æ
 };
 
 class IniFile
@@ -90,85 +90,85 @@ class IniFile
     }
 
  public:
-    /* æ‰“å¼€å¹¶è§£æä¸€ä¸ªåä¸ºfnameçš„INIæ–‡ä»¶ */
+    /* ´ò¿ª²¢½âÎöÒ»¸öÃûÎªfnameµÄINIÎÄ¼ş */
     int Load(const string &fname);
-    /* å°†å†…å®¹ä¿å­˜åˆ°å½“å‰æ–‡ä»¶ */
+    /* ½«ÄÚÈİ±£´æµ½µ±Ç°ÎÄ¼ş */
     int Save();
-    /* å°†å†…å®¹å¦å­˜åˆ°ä¸€ä¸ªåä¸ºfnameçš„æ–‡ä»¶ */
+    /* ½«ÄÚÈİÁí´æµ½Ò»¸öÃûÎªfnameµÄÎÄ¼ş */
     int SaveAs(const string &fname);
 
-    /* è·å–sectionæ®µç¬¬ä¸€ä¸ªé”®ä¸ºkeyçš„stringå€¼ï¼ŒæˆåŠŸè¿”å›0ï¼Œå¦åˆ™è¿”å›é”™è¯¯ç  */
+    /* »ñÈ¡section¶ÎµÚÒ»¸ö¼üÎªkeyµÄstringÖµ£¬³É¹¦·µ»Ø0£¬·ñÔò·µ»Ø´íÎóÂë */
     int GetStringValue(const string &section, const string &key, string *value);
-    /* è·å–sectionæ®µç¬¬ä¸€ä¸ªé”®ä¸ºkeyçš„intå€¼ï¼ŒæˆåŠŸè¿”å›0ï¼Œå¦åˆ™è¿”å›é”™è¯¯ç  */
+    /* »ñÈ¡section¶ÎµÚÒ»¸ö¼üÎªkeyµÄintÖµ£¬³É¹¦·µ»Ø0£¬·ñÔò·µ»Ø´íÎóÂë */
     int GetIntValue(const string &section, const string &key, int *value);
-    /* è·å–sectionæ®µç¬¬ä¸€ä¸ªé”®ä¸ºkeyçš„doubleå€¼ï¼ŒæˆåŠŸè¿”å›0ï¼Œå¦åˆ™è¿”å›é”™è¯¯ç  */
+    /* »ñÈ¡section¶ÎµÚÒ»¸ö¼üÎªkeyµÄdoubleÖµ£¬³É¹¦·µ»Ø0£¬·ñÔò·µ»Ø´íÎóÂë */
     int GetDoubleValue(const string &section, const string &key, double *value);
-    /* è·å–sectionæ®µç¬¬ä¸€ä¸ªé”®ä¸ºkeyçš„boolå€¼ï¼ŒæˆåŠŸè¿”å›0ï¼Œå¦åˆ™è¿”å›é”™è¯¯ç  */
+    /* »ñÈ¡section¶ÎµÚÒ»¸ö¼üÎªkeyµÄboolÖµ£¬³É¹¦·µ»Ø0£¬·ñÔò·µ»Ø´íÎóÂë */
     int GetBoolValue(const string &section, const string &key, bool *value);
-    /* è·å–æ³¨é‡Šï¼Œå¦‚æœkey=""åˆ™è·å–æ®µæ³¨é‡Š */
+    /* »ñÈ¡×¢ÊÍ£¬Èç¹ûkey=""Ôò»ñÈ¡¶Î×¢ÊÍ */
     int GetComment(const string &section, const string &key, string *comment);
-    /* è·å–è¡Œå°¾æ³¨é‡Šï¼Œå¦‚æœkey=""åˆ™è·å–æ®µçš„è¡Œå°¾æ³¨é‡Š */
+    /* »ñÈ¡ĞĞÎ²×¢ÊÍ£¬Èç¹ûkey=""Ôò»ñÈ¡¶ÎµÄĞĞÎ²×¢ÊÍ */
     int GetRightComment(const string &section, const string &key, string *rightComment);
 
-    /* è·å–sectionæ®µç¬¬ä¸€ä¸ªé”®ä¸ºkeyçš„stringå€¼ï¼ŒæˆåŠŸè¿”å›è·å–çš„å€¼ï¼Œå¦åˆ™è¿”å›é»˜è®¤å€¼ */
+    /* »ñÈ¡section¶ÎµÚÒ»¸ö¼üÎªkeyµÄstringÖµ£¬³É¹¦·µ»Ø»ñÈ¡µÄÖµ£¬·ñÔò·µ»ØÄ¬ÈÏÖµ */
     void GetStringValueOrDefault(const string &section, const string &key, string *value, const string &defaultValue);
-    /* è·å–sectionæ®µç¬¬ä¸€ä¸ªé”®ä¸ºkeyçš„intå€¼ï¼ŒæˆåŠŸè¿”å›è·å–çš„å€¼ï¼Œå¦åˆ™è¿”å›é»˜è®¤å€¼ */
+    /* »ñÈ¡section¶ÎµÚÒ»¸ö¼üÎªkeyµÄintÖµ£¬³É¹¦·µ»Ø»ñÈ¡µÄÖµ£¬·ñÔò·µ»ØÄ¬ÈÏÖµ */
     void GetIntValueOrDefault(const string &section, const string &key, int *value, int defaultValue);
-    /* è·å–sectionæ®µç¬¬ä¸€ä¸ªé”®ä¸ºkeyçš„doubleå€¼ï¼ŒæˆåŠŸè¿”å›è·å–çš„å€¼ï¼Œå¦åˆ™è¿”å›é»˜è®¤å€¼ */
+    /* »ñÈ¡section¶ÎµÚÒ»¸ö¼üÎªkeyµÄdoubleÖµ£¬³É¹¦·µ»Ø»ñÈ¡µÄÖµ£¬·ñÔò·µ»ØÄ¬ÈÏÖµ */
     void GetDoubleValueOrDefault(const string &section, const string &key, double *value, double defaultValue);
-    /* è·å–sectionæ®µç¬¬ä¸€ä¸ªé”®ä¸ºkeyçš„boolå€¼ï¼ŒæˆåŠŸè¿”å›è·å–çš„å€¼ï¼Œå¦åˆ™è¿”å›é»˜è®¤å€¼ */
+    /* »ñÈ¡section¶ÎµÚÒ»¸ö¼üÎªkeyµÄboolÖµ£¬³É¹¦·µ»Ø»ñÈ¡µÄÖµ£¬·ñÔò·µ»ØÄ¬ÈÏÖµ */
     void GetBoolValueOrDefault(const string &section, const string &key, bool *value, bool defaultValue);
 
-    /* è·å–sectionæ®µæ‰€æœ‰é”®ä¸ºkeyçš„å€¼,å¹¶å°†å€¼èµ‹åˆ°valuesçš„vectorä¸­ */
+    /* »ñÈ¡section¶ÎËùÓĞ¼üÎªkeyµÄÖµ,²¢½«Öµ¸³µ½valuesµÄvectorÖĞ */
     int GetValues(const string &section, const string &key, vector<string> *values);
 
-    /* è·å–sectionåˆ—è¡¨,å¹¶è¿”å›sectionä¸ªæ•° */
+    /* »ñÈ¡sectionÁĞ±í,²¢·µ»Øsection¸öÊı */
     int GetSections(vector<string> *sections);
-    /* è·å–sectionä¸ªæ•°ï¼Œè‡³å°‘å­˜åœ¨ä¸€ä¸ªç©ºsection */
+    /* »ñÈ¡section¸öÊı£¬ÖÁÉÙ´æÔÚÒ»¸ö¿Õsection */
     int GetSectionNum();
-    /* æ˜¯å¦å­˜åœ¨æŸä¸ªsection */
+    /* ÊÇ·ñ´æÔÚÄ³¸ösection */
     bool HasSection(const string &section);
-    /* è·å–æŒ‡å®šsectionçš„æ‰€æœ‰ken=valueä¿¡æ¯ */
+    /* »ñÈ¡Ö¸¶¨sectionµÄËùÓĞken=valueĞÅÏ¢ */
     IniSection *getSection(const string &section = "");
     
-    /* æ˜¯å¦å­˜åœ¨æŸä¸ªkey */
+    /* ÊÇ·ñ´æÔÚÄ³¸ökey */
     bool HasKey(const string &section, const string &key);
 
-    /* è®¾ç½®å­—ç¬¦ä¸²å€¼ */
+    /* ÉèÖÃ×Ö·û´®Öµ */
     int SetStringValue(const string &section, const string &key, const string &value);
-    /* è®¾ç½®æ•´å½¢å€¼ */
+    /* ÉèÖÃÕûĞÎÖµ */
     int SetIntValue(const string &section, const string &key, int value);
-    /* è®¾ç½®æµ®ç‚¹æ•°å€¼ */
+    /* ÉèÖÃ¸¡µãÊıÖµ */
     int SetDoubleValue(const string &section, const string &key, double value);
-    /* è®¾ç½®å¸ƒå°”å€¼ */
+    /* ÉèÖÃ²¼¶ûÖµ */
     int SetBoolValue(const string &section, const string &key, bool value);
-    /* è®¾ç½®æ³¨é‡Šï¼Œå¦‚æœkey=""åˆ™è®¾ç½®æ®µæ³¨é‡Š */
+    /* ÉèÖÃ×¢ÊÍ£¬Èç¹ûkey=""ÔòÉèÖÃ¶Î×¢ÊÍ */
     int SetComment(const string &section, const string &key, const string &comment);
-    /* è®¾ç½®è¡Œå°¾æ³¨é‡Šï¼Œå¦‚æœkey=""åˆ™è®¾ç½®æ®µçš„è¡Œå°¾æ³¨é‡Š */
+    /* ÉèÖÃĞĞÎ²×¢ÊÍ£¬Èç¹ûkey=""ÔòÉèÖÃ¶ÎµÄĞĞÎ²×¢ÊÍ */
     int SetRightComment(const string &section, const string &key, const string &rightComment);
 
-    /* åˆ é™¤æ®µ */
+    /* É¾³ı¶Î */
     void DeleteSection(const string &section);
-    /* åˆ é™¤ç‰¹å®šæ®µçš„ç‰¹å®šå‚æ•° */
+    /* É¾³ıÌØ¶¨¶ÎµÄÌØ¶¨²ÎÊı */
     void DeleteKey(const string &section, const string &key);
-    /*è®¾ç½®æ³¨é‡Šåˆ†éš”ç¬¦ï¼Œé»˜è®¤ä¸º"#" */
+    /*ÉèÖÃ×¢ÊÍ·Ö¸ô·û£¬Ä¬ÈÏÎª"#" */
     void SetCommentDelimiter(const string &delimiter);
 
     const string &GetErrMsg();
  private:
-    /* è·å–sectionæ®µæ‰€æœ‰é”®ä¸ºkeyçš„å€¼,å¹¶å°†å€¼èµ‹åˆ°valuesçš„vectorä¸­,,å°†æ³¨é‡Šèµ‹åˆ°commentsçš„vectorä¸­ */
+    /* »ñÈ¡section¶ÎËùÓĞ¼üÎªkeyµÄÖµ,²¢½«Öµ¸³µ½valuesµÄvectorÖĞ,,½«×¢ÊÍ¸³µ½commentsµÄvectorÖĞ */
     int GetValues(const string &section, const string &key, vector<string> *value, vector<string> *comments);
 
-    /* åŒæ—¶è®¾ç½®å€¼å’Œæ³¨é‡Š */
+    /* Í¬Ê±ÉèÖÃÖµºÍ×¢ÊÍ */
     int setValue(const string &section, const string &key, const string &value, const string &comment = "");
 
-    /* å»æ‰strå‰é¢çš„cå­—ç¬¦ */
+    /* È¥µôstrÇ°ÃæµÄc×Ö·û */
     static void trimleft(string &str, char c = ' ');
-    /* å»æ‰stråé¢çš„cå­—ç¬¦ */
+    /* È¥µôstrºóÃæµÄc×Ö·û */
     static void trimright(string &str, char c = ' ');
-    /* å»æ‰strå‰é¢å’Œåé¢çš„ç©ºæ ¼ç¬¦,Tabç¬¦ç­‰ç©ºç™½ç¬¦ */
+    /* È¥µôstrÇ°ÃæºÍºóÃæµÄ¿Õ¸ñ·û,Tab·ûµÈ¿Õ°×·û */
     static void trim(string &str);
-    /* å°†å­—ç¬¦ä¸²stræŒ‰åˆ†å‰²ç¬¦delimåˆ†å‰²æˆå¤šä¸ªå­ä¸² */
+    /* ½«×Ö·û´®str°´·Ö¸î·ûdelim·Ö¸î³É¶à¸ö×Ó´® */
  private:
     int UpdateSection(const string &cleanLine, const string &comment,
                       const string &rightComment, IniSection **section);
@@ -183,9 +183,9 @@ class IniFile
     void print();
 
  private:
-    /* è·å–sectionæ®µç¬¬ä¸€ä¸ªé”®ä¸ºkeyçš„å€¼,å¹¶å°†å€¼èµ‹åˆ°valueä¸­ */
+    /* »ñÈ¡section¶ÎµÚÒ»¸ö¼üÎªkeyµÄÖµ,²¢½«Öµ¸³µ½valueÖĞ */
     int getValue(const string &section, const string &key, string *value);
-    /* è·å–sectionæ®µç¬¬ä¸€ä¸ªé”®ä¸ºkeyçš„å€¼,å¹¶å°†å€¼èµ‹åˆ°valueä¸­,å°†æ³¨é‡Šèµ‹åˆ°commentä¸­ */
+    /* »ñÈ¡section¶ÎµÚÒ»¸ö¼üÎªkeyµÄÖµ,²¢½«Öµ¸³µ½valueÖĞ,½«×¢ÊÍ¸³µ½commentÖĞ */
     int getValue(const string &section, const string &key, string *value, string *comment);
 
     bool StringCmpIgnoreCase(const string &str1, const string &str2);
@@ -193,10 +193,10 @@ class IniFile
 
  private:
     typedef vector<IniSection *>::iterator IniSection_it;
-    vector<IniSection *> sections_vt;  // ç”¨äºå­˜å‚¨æ®µé›†åˆçš„vectorå®¹å™¨
+    vector<IniSection *> sections_vt;  // ÓÃÓÚ´æ´¢¶Î¼¯ºÏµÄvectorÈİÆ÷
     string iniFilePath;
     string commentDelimiter;
-    string errMsg;  // ä¿å­˜å‡ºé”™æ—¶çš„é”™è¯¯ä¿¡æ¯
+    string errMsg;  // ±£´æ³ö´íÊ±µÄ´íÎóĞÅÏ¢
 };
 
 }  // endof namespace inifile

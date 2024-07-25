@@ -5,9 +5,15 @@
 #pragma once
 #include "WlanHostedNetworkWinRT.h"
 #include "DeviceItem.h"
+#include "inifile.h"
 #include <vector>
 using namespace std;
 #define WM_USER_NOTIFYICON WM_USER+1
+#define WIFI_NOTIFY WM_USER+2
+#define MENU_1 WM_USER+1
+#define MENU_2 WM_USER+2
+#define MENU_3 WM_USER+3
+#define MENU_4 WM_USER+4
 
 // CWifiDirectDlg 对话框
 class CWifiDirectDlg : public CDialogEx , public IWlanHostedNetworkListener, public IWlanHostedNetworkPrompt
@@ -48,9 +54,10 @@ public:
 	Microsoft::WRL::Wrappers::Event _apEvent;
 	afx_msg void OnWifiClick();
 	CButton WifiButton;
-	bool m_bAddShellIcon;
+	bool m_bAddShellIcon = false;
 	NOTIFYICONDATA m_notify;
 	vector<Device> connectList;
+	inifile::IniFile ini;
 public:
 	virtual void OnDeviceConnected(std::wstring deviceId, std::wstring remoteHostAddress) override;
 	virtual void OnDeviceDisconnected(std::wstring deviceId) override;
@@ -70,8 +77,10 @@ public:
 	void AddShellIcon();
 
 	afx_msg LRESULT OnNotifyMsg(WPARAM wparam, LPARAM lparam);
+	afx_msg LRESULT OnWifiEventMessage(WPARAM wparam, LPARAM lparam);
 	afx_msg void OnClose();
 	void ShowMessage(LPCTSTR message);
 	// 连接显示列表
 	CListCtrl listCtrl;
+	afx_msg void OnBnClickedButton3();
 };

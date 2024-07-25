@@ -39,6 +39,15 @@ BOOL CWifiDirectApp::InitInstance()
 {
 	CWinApp::InitInstance();
 
+	HANDLE  hMutex = ::CreateMutex(NULL, FALSE, _T("WIFI热点工具"));
+	if (GetLastError() == ERROR_ALREADY_EXISTS)
+	{
+		MessageBox(nullptr,LPCWSTR(_T("软件已经打开了！")),LPCWSTR(_T("提示")),MB_OK);
+		return FALSE;
+	}
+
+
+
 
 	// 创建 shell 管理器，以防对话框包含
 	// 任何 shell 树视图控件或 shell 列表视图控件。

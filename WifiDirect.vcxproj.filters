@@ -39,6 +39,9 @@
     <ClInclude Include="DeviceItem.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="inifile.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WifiDirect.cpp">
@@ -51,6 +54,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="WlanHostedNetworkWinRT.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="inifile.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -68,7 +74,7 @@
     <Image Include="res\WifiDirect.ico">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="D:\0用户文件夹\Desktop\favicon.ico">
+    <Image Include="res\favicon.ico">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

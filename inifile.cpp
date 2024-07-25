@@ -26,31 +26,27 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <ctype.h>
-#include <iostream>
-#include <fstream>
+#include "pch.h"
 #include "inifile.h"
 
 namespace inifile
 {
 
-// æ„é€ å‡½æ•°ï¼Œä¼šåˆå§‹åŒ–æ³¨é‡Šå­—ç¬¦é›†åˆflags_ï¼ˆå®¹å™¨ï¼‰ï¼Œç›®å‰åªä½¿ç”¨#å’Œ;ä½œä¸ºæ³¨é‡Šå‰ç¼€
+// ¹¹Ôìº¯Êı£¬»á³õÊ¼»¯×¢ÊÍ×Ö·û¼¯ºÏflags_£¨ÈİÆ÷£©£¬Ä¿Ç°Ö»Ê¹ÓÃ#ºÍ;×÷Îª×¢ÊÍÇ°×º
 IniFile::IniFile()
 :commentDelimiter("#")
 {
 }
 
-//è§£æä¸€è¡Œæ•°æ®ï¼Œå¾—åˆ°é”®å€¼
+//½âÎöÒ»ĞĞÊı¾İ£¬µÃµ½¼üÖµ
 /* --------------------------------------------------------------------------*/
 /**
  * @brief   parse
  *
- * @param   content æ•°æ®æºæŒ‡é’ˆ
- * @param   key     é”®å
- * @param   value   é”®å€¼
- * @param   c       åˆ†éš”ç¬¦
+ * @param   content Êı¾İÔ´Ö¸Õë
+ * @param   key     ¼üÃû
+ * @param   value   ¼üÖµ
+ * @param   c       ·Ö¸ô·û
  *
  * @return  bool
  */
@@ -64,7 +60,7 @@ int IniFile::UpdateSection(const string &cleanLine, const string &comment,
                            const string &rightComment, IniSection **section)
 {
     IniSection *newSection;
-    // æŸ¥æ‰¾å³ä¸­æ‹¬å·
+    // ²éÕÒÓÒÖĞÀ¨ºÅ
     size_t index = cleanLine.find_first_of(']');
     if (index == string::npos) {
         errMsg = string("no matched ] found");
@@ -72,28 +68,28 @@ int IniFile::UpdateSection(const string &cleanLine, const string &comment,
     }
 
     int len = index - 1;
-    // è‹¥æ®µåä¸ºç©ºï¼Œç»§ç»­ä¸‹ä¸€è¡Œ
+    // Èô¶ÎÃûÎª¿Õ£¬¼ÌĞøÏÂÒ»ĞĞ
     if (len <= 0) {
         errMsg = string("section name is empty");
         return ERR_SECTION_EMPTY;
     }
 
-    // å–æ®µå
+    // È¡¶ÎÃû
     string s(cleanLine, 1, len);
 
     trim(s);
 
-    //æ£€æŸ¥æ®µæ˜¯å¦å·²å­˜åœ¨
+    //¼ì²é¶ÎÊÇ·ñÒÑ´æÔÚ
     if (getSection(s) != NULL) {
         errMsg = string("section ") + s + string("already exist");
         return ERR_SECTION_ALREADY_EXISTS;
     }
 
-    // ç”³è¯·ä¸€ä¸ªæ–°æ®µï¼Œç”±äºmapå®¹å™¨ä¼šè‡ªåŠ¨æ’åºï¼Œæ‰“ä¹±åŸæœ‰é¡ºåºï¼Œå› æ­¤æ”¹ç”¨vectorå­˜å‚¨ï¼ˆsections_vtï¼‰
+    // ÉêÇëÒ»¸öĞÂ¶Î£¬ÓÉÓÚmapÈİÆ÷»á×Ô¶¯ÅÅĞò£¬´òÂÒÔ­ÓĞË³Ğò£¬Òò´Ë¸ÄÓÃvector´æ´¢£¨sections_vt£©
     newSection = new IniSection();
-    // å¡«å……æ®µå
+    // Ìî³ä¶ÎÃû
     newSection->name = s;
-    // å¡«å……æ®µå¼€å¤´çš„æ³¨é‡Š
+    // Ìî³ä¶Î¿ªÍ·µÄ×¢ÊÍ
     newSection->comment = comment;
     newSection->rightComment = rightComment;
 
@@ -128,11 +124,11 @@ int IniFile::AddKeyValuePair(const string &cleanLine, const string &comment,
 int IniFile::Load(const string &filePath)
 {
     int err;
-    string line;  // å¸¦æ³¨é‡Šçš„è¡Œ
-    string cleanLine;  // å»æ‰æ³¨é‡Šåçš„è¡Œ
+    string line;  // ´ø×¢ÊÍµÄĞĞ
+    string cleanLine;  // È¥µô×¢ÊÍºóµÄĞĞ
     string comment;
     string rightComment;
-    IniSection *currSection = NULL;  // åˆå§‹åŒ–ä¸€ä¸ªå­—æ®µæŒ‡é’ˆ
+    IniSection *currSection = NULL;  // ³õÊ¼»¯Ò»¸ö×Ö¶ÎÖ¸Õë
 
     release();
 
@@ -143,38 +139,38 @@ int IniFile::Load(const string &filePath)
         return ERR_OPEN_FILE_FAILED;
     }
 
-    //å¢åŠ é»˜è®¤æ®µï¼Œå³ æ— åæ®µ""
+    //Ôö¼ÓÄ¬ÈÏ¶Î£¬¼´ ÎŞÃû¶Î""
     currSection = new IniSection();
     currSection->name = "";
     sections_vt.push_back(currSection);
 
-    // æ¯æ¬¡è¯»å–ä¸€è¡Œå†…å®¹åˆ°line
+    // Ã¿´Î¶ÁÈ¡Ò»ĞĞÄÚÈİµ½line
     while (std::getline(ifs, line)) {
         trim(line);
 
-        // step 0ï¼Œç©ºè¡Œå¤„ç†ï¼Œå¦‚æœé•¿åº¦ä¸º0ï¼Œè¯´æ˜æ˜¯ç©ºè¡Œï¼Œæ·»åŠ åˆ°commentï¼Œå½“ä½œæ˜¯æ³¨é‡Šçš„ä¸€éƒ¨åˆ†
+        // step 0£¬¿ÕĞĞ´¦Àí£¬Èç¹û³¤¶ÈÎª0£¬ËµÃ÷ÊÇ¿ÕĞĞ£¬Ìí¼Óµ½comment£¬µ±×÷ÊÇ×¢ÊÍµÄÒ»²¿·Ö
         if (line.length() <= 0) {
             comment += delim;
             continue;
         }
 
         // step 1
-        // å¦‚æœè¡Œé¦–ä¸æ˜¯æ³¨é‡Šï¼ŒæŸ¥æ‰¾è¡Œå°¾æ˜¯å¦å­˜åœ¨æ³¨é‡Š
-        // å¦‚æœè¯¥è¡Œä»¥æ³¨é‡Šå¼€å¤´ï¼Œæ·»åŠ åˆ°commentï¼Œè·³è¿‡å½“å‰å¾ªç¯ï¼Œcontinue
+        // Èç¹ûĞĞÊ×²»ÊÇ×¢ÊÍ£¬²éÕÒĞĞÎ²ÊÇ·ñ´æÔÚ×¢ÊÍ
+        // Èç¹û¸ÃĞĞÒÔ×¢ÊÍ¿ªÍ·£¬Ìí¼Óµ½comment£¬Ìø¹ıµ±Ç°Ñ­»·£¬continue
         if (IsCommentLine(line)) {
             comment += line + delim;
             continue;
         }
 
-        // å¦‚æœè¡Œé¦–ä¸æ˜¯æ³¨é‡Šï¼ŒæŸ¥æ‰¾è¡Œå°¾æ˜¯å¦å­˜åœ¨æ³¨é‡Šï¼Œè‹¥å­˜åœ¨ï¼Œåˆ‡å‰²è¯¥è¡Œï¼Œå°†æ³¨é‡Šå†…å®¹æ·»åŠ åˆ°rightComment
+        // Èç¹ûĞĞÊ×²»ÊÇ×¢ÊÍ£¬²éÕÒĞĞÎ²ÊÇ·ñ´æÔÚ×¢ÊÍ£¬Èô´æÔÚ£¬ÇĞ¸î¸ÃĞĞ£¬½«×¢ÊÍÄÚÈİÌí¼Óµ½rightComment
         split(line, commentDelimiter, &cleanLine, &rightComment);
 
-        // step 2ï¼Œåˆ¤æ–­lineå†…å®¹æ˜¯å¦ä¸ºæ®µæˆ–é”®
-        //æ®µå¼€å¤´æŸ¥æ‰¾ [
+        // step 2£¬ÅĞ¶ÏlineÄÚÈİÊÇ·ñÎª¶Î»ò¼ü
+        //¶Î¿ªÍ·²éÕÒ [
         if (cleanLine[0] == '[') {
             err = UpdateSection(cleanLine, comment, rightComment, &currSection);
         } else {
-            // å¦‚æœè¯¥è¡Œæ˜¯é”®å€¼ï¼Œæ·»åŠ åˆ°sectionæ®µçš„itemså®¹å™¨
+            // Èç¹û¸ÃĞĞÊÇ¼üÖµ£¬Ìí¼Óµ½section¶ÎµÄitemsÈİÆ÷
              err = AddKeyValuePair(cleanLine, comment, rightComment, currSection);
         }
 
@@ -183,7 +179,7 @@ int IniFile::Load(const string &filePath)
             return err;
         }
 
-        // commentæ¸…é›¶
+        // commentÇåÁã
         comment = "";
         rightComment = "";
     }
@@ -202,7 +198,7 @@ int IniFile::SaveAs(const string &filePath)
 {
     string data = "";
 
-    /* è½½å…¥sectionæ•°æ® */
+    /* ÔØÈësectionÊı¾İ */
     for (IniSection_it sect = sections_vt.begin(); sect != sections_vt.end(); ++sect) {
         if ((*sect)->comment != "") {
             data += (*sect)->comment;
@@ -217,7 +213,7 @@ int IniFile::SaveAs(const string &filePath)
             data += " " + commentDelimiter +(*sect)->rightComment;
         }
 
-        /* è½½å…¥itemæ•°æ® */
+        /* ÔØÈëitemÊı¾İ */
         for (IniSection::IniItem_it item = (*sect)->items.begin(); item != (*sect)->items.end(); ++item) {
             if (item->comment != "") {
                 data += item->comment;
@@ -314,7 +310,7 @@ int IniFile::GetBoolValue(const string &section, const string &key, bool *value)
     return err;
 }
 
-/* è·å–sectionæ®µç¬¬ä¸€ä¸ªé”®ä¸ºkeyçš„stringå€¼ï¼ŒæˆåŠŸè¿”å›è·å–çš„å€¼ï¼Œå¦åˆ™è¿”å›é»˜è®¤å€¼ */
+/* »ñÈ¡section¶ÎµÚÒ»¸ö¼üÎªkeyµÄstringÖµ£¬³É¹¦·µ»Ø»ñÈ¡µÄÖµ£¬·ñÔò·µ»ØÄ¬ÈÏÖµ */
 void IniFile::GetStringValueOrDefault(const string &section, const string &key,
                                       string *value, const string &defaultValue)
 {
@@ -325,7 +321,7 @@ void IniFile::GetStringValueOrDefault(const string &section, const string &key,
     return;
 }
 
-/* è·å–sectionæ®µç¬¬ä¸€ä¸ªé”®ä¸ºkeyçš„intå€¼ï¼ŒæˆåŠŸè¿”å›è·å–çš„å€¼ï¼Œå¦åˆ™è¿”å›é»˜è®¤å€¼ */
+/* »ñÈ¡section¶ÎµÚÒ»¸ö¼üÎªkeyµÄintÖµ£¬³É¹¦·µ»Ø»ñÈ¡µÄÖµ£¬·ñÔò·µ»ØÄ¬ÈÏÖµ */
 void IniFile::GetIntValueOrDefault(const string &section, const string &key, int *value, int defaultValue)
 {
     if (GetIntValue(section, key, value) != 0) {
@@ -335,7 +331,7 @@ void IniFile::GetIntValueOrDefault(const string &section, const string &key, int
     return;
 }
 
-/* è·å–sectionæ®µç¬¬ä¸€ä¸ªé”®ä¸ºkeyçš„doubleå€¼ï¼ŒæˆåŠŸè¿”å›è·å–çš„å€¼ï¼Œå¦åˆ™è¿”å›é»˜è®¤å€¼ */
+/* »ñÈ¡section¶ÎµÚÒ»¸ö¼üÎªkeyµÄdoubleÖµ£¬³É¹¦·µ»Ø»ñÈ¡µÄÖµ£¬·ñÔò·µ»ØÄ¬ÈÏÖµ */
 void IniFile::GetDoubleValueOrDefault(const string &section, const string &key, double *value, double defaultValue)
 {
     if (GetDoubleValue(section, key, value) != 0) {
@@ -345,7 +341,7 @@ void IniFile::GetDoubleValueOrDefault(const string &section, const string &key, 
     return;
 }
 
-/* è·å–sectionæ®µç¬¬ä¸€ä¸ªé”®ä¸ºkeyçš„boolå€¼ï¼ŒæˆåŠŸè¿”å›è·å–çš„å€¼ï¼Œå¦åˆ™è¿”å›é»˜è®¤å€¼ */
+/* »ñÈ¡section¶ÎµÚÒ»¸ö¼üÎªkeyµÄboolÖµ£¬³É¹¦·µ»Ø»ñÈ¡µÄÖµ£¬·ñÔò·µ»ØÄ¬ÈÏÖµ */
 void IniFile::GetBoolValueOrDefault(const string &section, const string &key, bool *value, bool defaultValue)
 {
     if (GetBoolValue(section, key, value) != 0) {
@@ -355,7 +351,7 @@ void IniFile::GetBoolValueOrDefault(const string &section, const string &key, bo
     return;
 }
 
-/* è·å–æ³¨é‡Šï¼Œå¦‚æœkey=""åˆ™è·å–æ®µæ³¨é‡Š */
+/* »ñÈ¡×¢ÊÍ£¬Èç¹ûkey=""Ôò»ñÈ¡¶Î×¢ÊÍ */
 int IniFile::GetComment(const string &section, const string &key, string *comment)
 {
     IniSection *sect = getSection(section);
@@ -381,7 +377,7 @@ int IniFile::GetComment(const string &section, const string &key, string *commen
     return ERR_NOT_FOUND_KEY;
 }
 
-/* è·å–è¡Œå°¾æ³¨é‡Šï¼Œå¦‚æœkey=""åˆ™è·å–æ®µçš„è¡Œå°¾æ³¨é‡Š */
+/* »ñÈ¡ĞĞÎ²×¢ÊÍ£¬Èç¹ûkey=""Ôò»ñÈ¡¶ÎµÄĞĞÎ²×¢ÊÍ */
 int IniFile::GetRightComment(const string &section, const string &key, string *rightComment)
 {
     IniSection *sect = getSection(section);
@@ -503,7 +499,7 @@ int IniFile::setValue(const string &section, const string &key, const string &va
     }
 
     if (sect == NULL) {
-        //å¦‚æœæ®µä¸å­˜åœ¨ï¼Œæ–°å»ºä¸€ä¸ª
+        //Èç¹û¶Î²»´æÔÚ£¬ĞÂ½¨Ò»¸ö
         sect = new IniSection();
 
         if (sect == NULL) {
@@ -513,7 +509,7 @@ int IniFile::setValue(const string &section, const string &key, const string &va
 
         sect->name = section;
         if (sect->name == "") {
-            // ç¡®ä¿ç©ºsectionåœ¨ç¬¬ä¸€ä¸ª
+            // È·±£¿ÕsectionÔÚµÚÒ»¸ö
             sections_vt.insert(sections_vt.begin(), sect);
         } else {
             sections_vt.push_back(sect);
@@ -653,7 +649,7 @@ void IniFile::DeleteKey(const string &section, const string &key)
 
 /*-------------------------------------------------------------------------*/
 /**
-  @brief    release: é‡Šæ”¾å…¨éƒ¨èµ„æºï¼Œæ¸…ç©ºå®¹å™¨
+  @brief    release: ÊÍ·ÅÈ«²¿×ÊÔ´£¬Çå¿ÕÈİÆ÷
   @param    none
   @return   none
  */
@@ -663,7 +659,7 @@ void IniFile::release()
     iniFilePath = "";
 
     for (IniSection_it it = sections_vt.begin(); it != sections_vt.end(); ++it) {
-        delete (*it);  // æ¸…é™¤section
+        delete (*it);  // Çå³ısection
     }
 
     sections_vt.clear();
@@ -671,9 +667,9 @@ void IniFile::release()
 
 /*-------------------------------------------------------------------------*/
 /**
-  @brief    åˆ¤æ–­æ˜¯å¦æ˜¯æ³¨é‡Š
-  @param    str ä¸€ä¸ªstringå˜é‡
-  @return   å¦‚æœæ˜¯æ³¨é‡Šåˆ™ä¸ºçœŸ
+  @brief    ÅĞ¶ÏÊÇ·ñÊÇ×¢ÊÍ
+  @param    str Ò»¸östring±äÁ¿
+  @return   Èç¹ûÊÇ×¢ÊÍÔòÎªÕæ
  */
 /*--------------------------------------------------------------------------*/
 bool IniFile::IsCommentLine(const string &str)
@@ -759,8 +755,8 @@ void IniFile::trimright(string &str, char c /*=' '*/)
 
 /*-------------------------------------------------------------------------*/
 /**
-  @brief    trimï¼Œæ•´ç†ä¸€è¡Œå­—ç¬¦ä¸²ï¼Œå»æ‰é¦–å°¾ç©ºæ ¼
-  @param    str stringå˜é‡
+  @brief    trim£¬ÕûÀíÒ»ĞĞ×Ö·û´®£¬È¥µôÊ×Î²¿Õ¸ñ
+  @param    str string±äÁ¿
  */
 /*--------------------------------------------------------------------------*/
 void IniFile::trim(string &str)
@@ -790,11 +786,11 @@ void IniFile::trim(string &str)
 
 /*-------------------------------------------------------------------------*/
 /**
-  @brief    splitï¼Œç”¨åˆ†éš”ç¬¦åˆ‡å‰²å­—ç¬¦ä¸²
-  @param    str è¾“å…¥å­—ç¬¦ä¸²
-  @param    left_str åˆ†éš”åå¾—åˆ°çš„å·¦å­—ç¬¦ä¸²
-  @param    right_str åˆ†éš”åå¾—åˆ°çš„å³å­—ç¬¦ä¸²ï¼ˆä¸åŒ…å«seperatorï¼‰
-  @param    seperator åˆ†éš”ç¬¦
+  @brief    split£¬ÓÃ·Ö¸ô·ûÇĞ¸î×Ö·û´®
+  @param    str ÊäÈë×Ö·û´®
+  @param    left_str ·Ö¸ôºóµÃµ½µÄ×ó×Ö·û´®
+  @param    right_str ·Ö¸ôºóµÃµ½µÄÓÒ×Ö·û´®£¨²»°üº¬seperator£©
+  @param    seperator ·Ö¸ô·û
   @return   pos
  */
 /*--------------------------------------------------------------------------*/

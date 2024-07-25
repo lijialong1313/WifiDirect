@@ -22,5 +22,8 @@
 #include <map>
 #include <stdio.h>
 #include <tchar.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <fstream>
 
 #endif //PCH_H
